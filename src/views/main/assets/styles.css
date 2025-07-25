@@ -1,0 +1,43 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.hero {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 4vmin;
+}
+
+.logo {
+  width: 30vmin;
+}
+
+#settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5vmin;
+}
+
+textarea {
+  font-family: var(--vscode-font-family);
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 3px;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  outline: none;
+  transition: border-color 0.2s ease;
+  resize: vertical;
+  min-height: 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+textarea:focus {
+  border-color: var(--vscode-focusBorder);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+}

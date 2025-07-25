@@ -1,12 +1,17 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
-import * as path from "path";
 
 export default class WebviewProvider implements vscode.WebviewViewProvider {
   htmlPath: string = "";
+  assets: string[] = [];
 
-  constructor(private readonly _extensionUri: vscode.Uri, htmlPath: string) {
+  constructor(
+    private readonly _extensionUri: vscode.Uri,
+    htmlPath: string,
+    assets: string[]
+  ) {
     this.htmlPath = htmlPath;
+    this.assets = assets;
   }
 
   public resolveWebviewView(
@@ -25,10 +30,46 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
   private _getHtmlForWebview(webview: vscode.Webview) {
     const htmlPath = vscode.Uri.joinPath(
       this._extensionUri,
+      "src",
       "views",
-      this.htmlPath
+      this.htmlPath,
+      "index.html"
     );
-    const htmlContent = fs.readFileSync(htmlPath.fsPath, "utf8");
+    const assetsFolder = vscode.Uri.joinPath(
+      this._extensionUri,
+      "src",
+      "views",
+      this.htmlPath,
+      "assets"
+    );
+
+    let htmlContent = fs.readFileSync(htmlPath.fsPath, "utf8");
+
+    const fixUri = (fileName: string) =>
+      webview.asWebviewUri(vscode.Uri.joinPath(assetsFolder, fileName));
+
+    const fixedUris = this.assets.map((asset) => fixUri(asset));
+    fixedUris.forEach((uri, index) => {
+      htmlContent = htmlContent.replace(this.assets[index], uri.toString());
+    });
+
+    htmlContent = htmlContent.replace(
+      "%GLOBAL_STYLES%",
+      webview
+        .asWebviewUri(
+          vscode.Uri.joinPath(this._extensionUri, "src", "views", "global.css")
+        )
+        .toString()
+    );
+
+    webview.onDidReceiveMessage((message) => {
+      if (message.type === "open-settings") {
+        vscode.commands.executeCommand(
+          "workbench.action.openSettings",
+          "@ext:nartaliti.pilot"
+        );
+      }
+    });
 
     return htmlContent;
   }

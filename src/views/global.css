@@ -1,0 +1,76 @@
+.center-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+input[type="text"] {
+  font-family: var(--vscode-font-family);
+  font-size: 14px;
+  padding: 6px 10px;
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 3px;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: 200px;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus {
+  border-color: var(--vscode-focusBorder);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+}
+
+button {
+  font-family: var(--vscode-font-family);
+  font-size: 14px;
+  color: var(--vscode-button-foreground);
+  background-color: var(--vscode-button-background);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+button:active {
+  background-color: var(
+    --vscode-button-activeBackground,
+    var(--vscode-button-hoverBackground)
+  );
+}
+
+button:focus {
+  outline: none;
+}
+
+select {
+  font-family: var(--vscode-font-family);
+  font-size: 14px;
+  padding: 6px 10px;
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 3px;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  outline: none;
+  transition: border-color 0.2s ease;
+  appearance: none; /* Remove default OS styling */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23aaa" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  padding-right: 30px;
+}
+
+select:focus {
+  border-color: var(--vscode-focusBorder);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+}

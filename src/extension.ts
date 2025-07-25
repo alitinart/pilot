@@ -8,7 +8,11 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       "main",
-      new WebviewProvider(context.extensionUri, "/main/index.html")
+      new WebviewProvider(context.extensionUri, "main", [
+        "main.js",
+        "styles.css",
+        "icon.svg",
+      ])
     )
   );
 

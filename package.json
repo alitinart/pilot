@@ -1,6 +1,7 @@
 {
   "name": "pilot",
   "displayName": "pilot",
+  "publisher": "nartaliti",
   "description": "A totally free, self hosted ai assistant",
   "version": "0.0.1",
   "engines": {
@@ -18,6 +19,29 @@
         "title": "Hello World"
       }
     ],
+    "configuration": {
+      "title": "Pilot AI",
+      "properties": {
+        "pilot.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Server URL"
+        },
+        "pilot.model": {
+          "type": "string",
+          "default": "",
+          "description": "AI model name ( llama2:latest )"
+        },
+        "pilot.systemMessage": {
+          "type": "string",
+          "default": {
+            "message": ""
+          },
+          "editPresentation": "multilineText",
+          "markdownDescription": "Defines the system prompt that guides the AI's behavior. This message is prepended to every conversation and should be written carefully to shape the assistant's tone, role, or limitations."
+        }
+      }
+    },
     "views": {
       "main": [
         {

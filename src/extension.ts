@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
+
 import WebviewProvider from "./provider/WebviewProvider";
+import OllamaCompletionProvider from "./provider/OllamaCompletionProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand("pilot.helloWorld", () => {
@@ -14,6 +16,11 @@ export function activate(context: vscode.ExtensionContext) {
         "icon.svg",
       ])
     )
+  );
+
+  vscode.languages.registerInlineCompletionItemProvider(
+    { scheme: "file" },
+    new OllamaCompletionProvider()
   );
 
   context.subscriptions.push(disposable);

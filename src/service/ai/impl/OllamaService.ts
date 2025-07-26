@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
 import axios, { AxiosError } from "axios";
-import { CodeChunk } from "../types/CodeChunk";
-import getSetting from "../conf/getSetting";
+import { CodeChunk } from "../../../types/CodeChunk";
+import getSetting from "../../../conf/getSetting";
+import { AIService } from "../AIService";
 
-export default class OllamaService {
+export default class OllamaService implements AIService {
   private static instance: OllamaService;
 
   private model = getSetting<string>("model");

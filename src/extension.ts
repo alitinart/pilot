@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 
 import WebviewProvider from "./provider/WebviewProvider";
-import OllamaCompletionProvider from "./provider/OllamaCompletionProvider";
-import OllamaService from "./service/OllamaService";
+import OllamaCompletionProvider from "./provider/ai/OllamaCompletionProvider";
+import OllamaService from "./service/ai/impl/OllamaService";
 import getSetting from "./conf/getSetting";
 import indexWorkspace from "./conf/indexWorkspace";
 
@@ -13,7 +13,7 @@ export async function activate(context: vscode.ExtensionContext) {
   if (model) {
     await ollamaService.loadModel(model);
   }
-  indexWorkspace(ollamaService);
+  await indexWorkspace(ollamaService);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(

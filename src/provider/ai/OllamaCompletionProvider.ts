@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import OllamaService from "../service/OllamaService";
-import { debounce, debounceAsync } from "../conf/debounce";
-import StatusBarProvider from "./StatusBarProvider";
+import { debounce, debounceAsync } from "../../conf/debounce";
+import StatusBarProvider from "../StatusBarProvider";
+import OllamaService from "../../service/ai/impl/OllamaService";
 
 const DEBOUNCE_DURATION = 700;
 

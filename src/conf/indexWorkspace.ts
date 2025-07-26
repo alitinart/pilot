@@ -1,10 +1,13 @@
-import OllamaService from "../service/OllamaService";
+import { AIService } from "./../service/ai/AIService";
 import * as vscode from "vscode";
 import { CodeChunk } from "../types/CodeChunk";
+import StatusBarProvider from "../provider/StatusBarProvider";
 
 const CHUNK_SIZE = 50;
+const MAX_RESULTS = 5000;
 
-export default async function indexWorkspace(ollamaService: OllamaService) {
+export default async function indexWorkspace(AIService: AIService) {
+  StatusBarProvider.show(`$(sync~spin) Indexing Workspace...`);
   vscode.window.showInformationMessage("Indexing workspace with Ollama...");
 
   const includePattern =
@@ -12,12 +15,12 @@ export default async function indexWorkspace(ollamaService: OllamaService) {
   const excludePattern =
     "{**/node_modules/**,**/.git/**,**/dist/**,**/build/**,**/out/**,**/__pycache__/**,**/*.min.js,**/*.map,**/.vscode/**,**/.idea/**,**/coverage/**,**/test/**,**/tests/**,**/tmp/**,**/temp/**,**/vendor/**,**/*.log,**/*.lock,**/*.bak,**/*.tmp,**/*.DS_Store}";
 
-  const maxResults = 5000; // Adjust as needed
+  const MAX_RESULTS = 5000;
 
   const files = await vscode.workspace.findFiles(
     includePattern,
     excludePattern,
-    maxResults
+    MAX_RESULTS
   );
   const codeChunks: CodeChunk[] = [];
 
@@ -34,7 +37,7 @@ export default async function indexWorkspace(ollamaService: OllamaService) {
         const chunkText = lines.slice(i, i + CHUNK_SIZE).join("\n");
         if (chunkText.trim().length > 0) {
           if (chunkText.length > 10 && chunkText.length < 4000) {
-            const embedding = await ollamaService.getEmbeddings(chunkText);
+            const embedding = await AIService.getEmbeddings(chunkText);
             codeChunks.push({
               filePath: file.fsPath,
               text: chunkText,
@@ -55,5 +58,6 @@ export default async function indexWorkspace(ollamaService: OllamaService) {
     `Workspace indexing complete! Indexed ${codeChunks.length} chunks.`
   );
 
-  ollamaService.setCodeChunks(codeChunks);
+  AIService.setCodeChunks(codeChunks);
+  StatusBarProvider.hide();
 }

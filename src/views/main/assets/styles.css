@@ -20,6 +20,9 @@ body {
 
 .branding {
   width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .branding h1 {
@@ -111,8 +114,9 @@ body {
 }
 
 #chat-input {
-  flex-grow: 1;
   resize: none;
+  min-height: min-content;
+  max-height: 300px;
 }
 
 #send-button {

@@ -1,10 +1,17 @@
 (function () {
   const vscode = acquireVsCodeApi();
 
-  const loadingBar = document.getElementById("loading-bar");
   const messagesDiv = document.getElementById("messages");
   const chatInput = document.getElementById("chat-input");
   const sendButton = document.getElementById("send-button");
+  let loading = false;
+
+  const textarea = document.getElementById("chat-input");
+
+  textarea.addEventListener("input", () => {
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + "px";
+  });
 
   marked.setOptions({
     highlight: function (code, lang) {
@@ -40,6 +47,8 @@
     loadingElement.id = "loading-message";
     messagesDiv.appendChild(loadingElement);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    sendButton.disabled = true;
+    loading = true;
   }
 
   function removeLoadingMessage() {
@@ -47,6 +56,8 @@
     if (loading) {
       loading.remove();
     }
+    sendButton.disabled = false;
+    loading = false;
   }
 
   sendButton.addEventListener("click", () => {
@@ -63,7 +74,7 @@
   });
 
   chatInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !loading) {
       e.preventDefault();
       sendButton.click();
     }

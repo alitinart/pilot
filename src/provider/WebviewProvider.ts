@@ -63,11 +63,20 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
     );
 
     webview.onDidReceiveMessage((message) => {
-      if (message.type === "open-settings") {
-        vscode.commands.executeCommand(
-          "workbench.action.openSettings",
-          "@ext:nartaliti.pilot"
-        );
+      switch (message.command) {
+        case "openSettings":
+          vscode.commands.executeCommand(
+            "workbench.action.openSettings",
+            "@ext:nartaliti.pilot"
+          );
+          break;
+        case "sendMessage":
+          vscode.window.showInformationMessage(message.text);
+          break;
+        default:
+          vscode.window.showErrorMessage(
+            "Unknown Webview message type - Pilot" + message.type
+          );
       }
     });
 

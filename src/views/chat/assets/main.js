@@ -4,7 +4,6 @@
   const messagesDiv = document.getElementById("messages");
   const chatInput = document.getElementById("chat-input");
   const sendButton = document.getElementById("send-button");
-  let loading = false;
 
   const textarea = document.getElementById("chat-input");
 
@@ -48,7 +47,6 @@
     messagesDiv.appendChild(loadingElement);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
     sendButton.disabled = true;
-    loading = true;
   }
 
   function removeLoadingMessage() {
@@ -57,7 +55,6 @@
       loading.remove();
     }
     sendButton.disabled = false;
-    loading = false;
   }
 
   sendButton.addEventListener("click", () => {
@@ -70,13 +67,6 @@
       chatInput.value = "";
       addMessage("user", content);
       addLoadingMessage();
-    }
-  });
-
-  chatInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey && !loading) {
-      e.preventDefault();
-      sendButton.click();
     }
   });
 

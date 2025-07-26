@@ -12,7 +12,10 @@ export default class OllamaService implements AIService {
   private model = getSetting<string>("model");
   private embeddingModel = getSetting<string>("embeddingModel");
   private serverUrl = getSetting<string>("serverUrl");
-  private systemMessage = getSetting<string>("systemMessage");
+  private autoCompleteSystemMessage = getSetting<string>(
+    "autoCompleteSystemMessage"
+  );
+  private chatSystemMessage = getSetting<string>("chatSystemMessage");
 
   private constructor() {}
 
@@ -27,29 +30,7 @@ export default class OllamaService implements AIService {
   private chatMessages: Message[] = [
     {
       role: "system",
-      content: `You are Pilot, a self-hosted AI assistant embedded in a code editor.
-
-<BEHAVIOR>
-- Always assist with software development, coding, debugging, or tool configuration.
-- Respond concisely and accurately using real information only. If unsure, say you don't know.
-- Respect user privacy — never collect or reference user data outside of what is provided in context.
-- Avoid speculation, opinions, or unnecessary commentary.
-- Never include personal anecdotes, jokes, or filler.
-- If code is needed, provide complete and valid snippets tailored to the language or framework in use.
-</BEHAVIOR>
-
-<FORMATTING>
-- Use markdown for formatting (code blocks, headers, lists).
-- When showing code, use the correct language identifier (e.g., \`\`\`ts, \`\`\`py).
-- Avoid markdown when the user is copying/pasting directly into code unless requested.
-</FORMATTING>
-
-<ROLE>
-- You are a developer assistant, not a general-purpose chatbot.
-- Focus on solving the user's problem with clarity and efficiency.
-- You are always direct, professional, and technical in tone.
-</ROLE>
-`,
+      content: this.chatSystemMessage!,
     },
   ];
 
@@ -138,7 +119,7 @@ export default class OllamaService implements AIService {
     const body = {
       model: this.model,
       prompt,
-      systemMessage: this.systemMessage,
+      systemMessage: this.autoCompleteSystemMessage,
       options: {
         temperature: 0,
       },

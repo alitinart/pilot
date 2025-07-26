@@ -2,7 +2,7 @@
   "name": "pilot",
   "displayName": "pilot",
   "publisher": "nartaliti",
-  "description": "A totally free, self hosted ai assistant",
+  "description": "Host your own coding assistant instantly",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.102.0"
@@ -16,10 +16,6 @@
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "pilot.helloWorld",
-        "title": "Hello World"
-      },
       {
         "command": "pilot.triggerInlineCompletion",
         "title": "Pilot: Rerun Inline Completion"
@@ -50,19 +46,25 @@
           "default": "",
           "description": "This model is used to embed project code to the AI (nomic-embed-text:latest)"
         },
-        "pilot.systemMessage": {
+        "pilot.autoCompleteSystemMessage": {
           "type": "string",
           "default": "You are a strict code completion assistant used in a code editor.\n\n<BEHAVIOR>\n- You must return only the continuation of the code.\n- NEVER repeat or rewrite code that is already present.\n- Your output will be inserted directly at the current cursor.\n- If a function is partially written, continue it without repeating the header or prior lines.\n</BEHAVIOR>\n\n<FORMATTING>\n- Do not wrap your response in markdown.\n- Output only valid code — no comments, explanations, or repeated lines.\n</FORMATTING>",
           "editPresentation": "multilineText",
-          "markdownDescription": "Defines the system prompt that guides the AI's behavior. This message is prepended to every conversation and should be written carefully to shape the assistant's tone, role, or limitations."
+          "markdownDescription": "Sets the system prompt used for inline code completions.\n\nTo reset this setting to its default, click the gear icon (⚙️) next to this field and choose **'Reset to Default'**."
+        },
+        "pilot.chatSystemMessage": {
+          "type": "string",
+          "default": "You are Pilot, a self-hosted AI assistant embedded in a code editor.\n\n<BEHAVIOR>\n- Always assist with software development, coding, debugging, or tool configuration.\n- Respond concisely and accurately using real information only. If unsure, say you don't know.\n- Respect user privacy — never collect or reference user data outside of what is provided in context.\n- Avoid speculation, opinions, or unnecessary commentary.\n- Never include personal anecdotes, jokes, or filler.\n- If code is needed, provide complete and valid snippets tailored to the language or framework in use.\n</BEHAVIOR>\n\n<FORMATTING>\n- Use markdown for formatting (code blocks, headers, lists).\n- When showing code, use the correct language identifier (e.g., ```ts, ```py).\n- Avoid markdown when the user is copying/pasting directly into code unless requested.\n</FORMATTING>\n\n<ROLE>\n- You are a developer assistant, not a general-purpose chatbot.\n- Focus on solving the user's problem with clarity and efficiency.\n- You are always direct, professional, and technical in tone.\n</ROLE>",
+          "editPresentation": "multilineText",
+          "markdownDescription": "Sets the system prompt used for general AI interactions in the editor, such as chat based assistance.\n\nTo reset this setting to its default, click the gear icon (⚙️) next to this field and choose **'Reset to Default'**."
         }
       }
     },
     "views": {
-      "main": [
+      "chat": [
         {
-          "id": "main",
-          "name": "Panel",
+          "id": "chat",
+          "name": "Chat",
           "icon": "/resources/icon.svg",
           "type": "webview"
         }
@@ -71,7 +73,7 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "main",
+          "id": "chat",
           "title": "Pilot",
           "icon": "/resources/icon.svg"
         }

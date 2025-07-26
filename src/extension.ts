@@ -17,8 +17,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      "main",
-      new WebviewProvider(context.extensionUri, "main", [
+      "chat",
+      new WebviewProvider(context.extensionUri, "chat", [
         "main.js",
         "styles.css",
         "icon.svg",

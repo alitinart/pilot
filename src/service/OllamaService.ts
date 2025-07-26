@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
 import axios, { AxiosError } from "axios";
 import { CodeChunk } from "../types/CodeChunk";
+import getSetting from "../conf/getSetting";
 
 export default class OllamaService {
   private static instance: OllamaService;
 
-  private config = vscode.workspace.getConfiguration("pilot");
-  private model = this.config.get<string>("model");
-  private embeddingModel = this.config.get<string>("embeddingModel");
-  private serverUrl = this.config.get<string>("serverUrl");
-  private systemMessage = this.config.get<string>("systemMessage");
+  private model = getSetting<string>("model");
+  private embeddingModel = getSetting<string>("embeddingModel");
+  private serverUrl = getSetting<string>("serverUrl");
+  private systemMessage = getSetting<string>("systemMessage");
 
   private constructor() {}
 
@@ -31,6 +31,10 @@ export default class OllamaService {
       }
       return res.data;
     } catch (err: any) {
+      console.error("Error loading model:", err);
+      vscode.window.showErrorMessage(
+        `Failed to load model "${name}": ${err.message || err.toString()}`
+      );
       throw err;
     }
   }
@@ -44,6 +48,10 @@ export default class OllamaService {
       }
       return res.data;
     } catch (err: any) {
+      console.error("Error unloading model:", err);
+      vscode.window.showErrorMessage(
+        `Failed to unload model "${name}": ${err.message || err.toString()}`
+      );
       throw err;
     }
   }
@@ -76,7 +84,10 @@ export default class OllamaService {
         console.log("Request cancelled:", err.message);
         return "";
       }
-      console.error(err);
+      console.error("Error during completion:", err);
+      vscode.window.showErrorMessage(
+        `Completion failed: ${err.message || err.toString()}`
+      );
       throw err;
     }
   }
@@ -94,24 +105,34 @@ export default class OllamaService {
       }
       return res.data.embedding;
     } catch (err: any) {
-      console.error(err);
-      console.error(`Error generating embedding: ${err.message}`);
+      console.error("Error generating embedding:", err);
+      vscode.window.showErrorMessage(
+        `Failed to generate embeddings: ${err.message || err.toString()}`
+      );
       return [];
     }
   }
 
-  public async retreiver(text: string) {
-    const queryEmbedding = await this.getEmbeddings(text);
-    const relevantChunks = this.retrieveRelevantChunks(queryEmbedding);
+  public async retriever(text: string) {
+    try {
+      const queryEmbedding = await this.getEmbeddings(text);
+      const relevantChunks = this.retrieveRelevantChunks(queryEmbedding);
 
-    let retrievedContext = "";
-    if (relevantChunks.length > 0) {
-      retrievedContext = relevantChunks
-        .map((chunk) => `File: ${chunk.filePath}\n${chunk.text}`)
-        .join("\n\n");
+      let retrievedContext = "";
+      if (relevantChunks.length > 0) {
+        retrievedContext = relevantChunks
+          .map((chunk) => `File: ${chunk.filePath}\n${chunk.text}`)
+          .join("\n\n");
+      }
+
+      return retrievedContext;
+    } catch (err: any) {
+      console.error("Error retrieving context:", err);
+      vscode.window.showErrorMessage(
+        `Failed to retrieve context: ${err.message || err.toString()}`
+      );
+      return "";
     }
-
-    return retrievedContext;
   }
 
   private cosineSimilarity(vec1: number[], vec2: number[]): number {

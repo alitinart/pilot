@@ -3,11 +3,16 @@ import * as vscode from "vscode";
 import WebviewProvider from "./provider/WebviewProvider";
 import OllamaCompletionProvider from "./provider/OllamaCompletionProvider";
 import OllamaService from "./service/OllamaService";
+import getSetting from "./conf/getSetting";
 
-export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand("pilot.helloWorld", () => {
-    vscode.window.showInformationMessage("Hello World from pilot!");
-  });
+const ollamaService = OllamaService.getInstance();
+const model = getSetting<string>("model");
+
+export async function activate(context: vscode.ExtensionContext) {
+  if (model) {
+    await ollamaService.loadModel(model);
+  }
+
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       "main",
@@ -27,7 +32,11 @@ export function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand("editor.action.inlineSuggest.trigger");
   });
 
-  context.subscriptions.push(disposable);
+  vscode.window.showInformationMessage("Pilot Ready 🚀");
 }
 
-export function deactivate() {}
+export async function deactivate() {
+  if (model) {
+    await ollamaService.unloadModel(model);
+  }
+}

@@ -64,6 +64,16 @@ export default class OllamaCompletionProvider
       )
     );
 
+    let projectContext = "";
+    if (this.ollamaService.getCodeChunks().length > 0) {
+      const queryTextForRetrieval = currentContext;
+      if (queryTextForRetrieval.trim().length > 0) {
+        projectContext = await this.ollamaService.retriever(
+          queryTextForRetrieval
+        );
+      }
+    }
+
     const prompt = `
 <system>
 ${this.systemMessage}
@@ -72,6 +82,13 @@ ${this.systemMessage}
 <code_before_cursor>
 ${currentContext}
 </code_before_cursor>
+
+${
+  projectContext !== "" &&
+  `<code_from_other_files>
+  ${projectContext}
+  </code_from_other_files>`
+}
 
 <task>
 Continue this code without repeating anything above. Your output will be inserted directly where the cursor is.

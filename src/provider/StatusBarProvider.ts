@@ -5,11 +5,11 @@ export default class StatusBarProvider {
 
   private constructor() {}
 
-  public static show(text: string) {
+  public static show(text: string, priority = 100) {
     if (!this.statusBarItem) {
       this.statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
-        100
+        priority
       );
     }
     this.statusBarItem.text = text;

@@ -22,6 +22,14 @@ export default class OllamaService {
 
   private codeChunks: CodeChunk[] = [];
 
+  public getCodeChunks() {
+    return this.codeChunks;
+  }
+
+  public setCodeChunks(codeChunks: CodeChunk[]) {
+    this.codeChunks = codeChunks;
+  }
+
   public async loadModel(name: string) {
     const body = { model: name };
     try {

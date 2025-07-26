@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import OllamaService from "../service/OllamaService";
 import { debounce, debounceAsync } from "../conf/debounce";
+import StatusBarProvider from "./StatusBarProvider";
 
 const DEBOUNCE_DURATION = 700;
 
@@ -76,7 +77,7 @@ ${currentContext}
 Continue this code without repeating anything above. Your output will be inserted directly where the cursor is.
 </task>
 `;
-
+    StatusBarProvider.show(`$(sync~spin) Pilot Autocompleting...`);
     try {
       const completion = await this.ollamaService.completion(
         prompt,
@@ -104,6 +105,8 @@ Continue this code without repeating anything above. Your output will be inserte
       }
       console.error("Error during completion:", err);
       return undefined;
+    } finally {
+      StatusBarProvider.hide();
     }
   }
 

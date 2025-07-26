@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import OllamaService from "../service/OllamaService";
-import { debounce } from "../conf/debounce";
+import { debounce, debounceAsync } from "../conf/debounce";
+
+const DEBOUNCE_DURATION = 700;
 
 export default class OllamaCompletionProvider
   implements vscode.InlineCompletionItemProvider
@@ -11,6 +13,8 @@ export default class OllamaCompletionProvider
   embeddingModel: string | undefined;
   ollamaService: OllamaService = OllamaService.getInstance();
 
+  debouncedProvider;
+
   private currentCancellationTokenSource?: vscode.CancellationTokenSource;
 
   constructor() {
@@ -20,9 +24,22 @@ export default class OllamaCompletionProvider
     this.model = config.get<string>("model");
     this.systemMessage = config.get<string>("systemMessage");
     this.embeddingModel = config.get<string>("embeddingModel");
+    this.debouncedProvider = debounceAsync(
+      this._provideInlineCompletionItems.bind(this),
+      DEBOUNCE_DURATION
+    );
   }
 
   async provideInlineCompletionItems(
+    document: vscode.TextDocument,
+    position: vscode.Position,
+    context: vscode.InlineCompletionContext,
+    token: vscode.CancellationToken
+  ): Promise<vscode.InlineCompletionItem[] | null | undefined> {
+    return this.debouncedProvider(document, position, context, token);
+  }
+
+  async _provideInlineCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
     context: vscode.InlineCompletionContext,
@@ -57,10 +74,10 @@ ${currentContext}
 `;
 
     try {
-      const completion = debounce(
-        await this.ollamaService.completion(prompt, linkedToken),
-        1000
-      )();
+      const completion = await this.ollamaService.completion(
+        prompt,
+        linkedToken
+      );
 
       if (linkedToken.isCancellationRequested || !completion) {
         return undefined;

@@ -2,11 +2,11 @@ import * as vscode from "vscode";
 import axios, { AxiosError } from "axios";
 import { CodeChunk } from "../types/CodeChunk";
 
-export class OllamaService {
+export default class OllamaService {
   private static instance: OllamaService;
 
   private config = vscode.workspace.getConfiguration("pilot");
-  private model = this.config.get<string>("modelName");
+  private model = this.config.get<string>("model");
   private embeddingModel = this.config.get<string>("embeddingModel");
   private serverUrl = this.config.get<string>("serverUrl");
   private systemMessage = this.config.get<string>("systemMessage");
@@ -48,7 +48,7 @@ export class OllamaService {
     }
   }
 
-  public async completion(prompt: string) {
+  public async completion(prompt: string, token?: vscode.CancellationToken) {
     const body = {
       model: this.model,
       prompt,
@@ -59,14 +59,24 @@ export class OllamaService {
       stream: false,
     };
 
-    try {
-      const res = await axios.post(`${this.serverUrl}/api/generate`, body);
-      if (res.status !== 200) {
-        throw new Error(`Ollama API error: ${res.statusText}`);
-      }
+    const source = axios.CancelToken.source();
+    if (token) {
+      token.onCancellationRequested(() => {
+        source.cancel("Request cancelled by user input.");
+      });
+    }
 
+    try {
+      const res = await axios.post(`${this.serverUrl}/api/generate`, body, {
+        cancelToken: source.token,
+      });
       return res.data.response;
     } catch (err: any) {
+      if (axios.isCancel(err)) {
+        console.log("Request cancelled:", err.message);
+        return "";
+      }
+      console.error(err);
       throw err;
     }
   }
@@ -105,18 +115,27 @@ export class OllamaService {
   }
 
   private cosineSimilarity(vec1: number[], vec2: number[]): number {
-    if (vec1.length === 0 || vec2.length === 0) return 0;
+    if (vec1.length === 0 || vec2.length === 0) {
+      return 0;
+    }
+
     let dotProduct = 0;
     let magnitude1 = 0;
     let magnitude2 = 0;
+
     for (let i = 0; i < vec1.length; i++) {
       dotProduct += vec1[i] * vec2[i];
       magnitude1 += vec1[i] * vec1[i];
       magnitude2 += vec2[i] * vec2[i];
     }
+
     magnitude1 = Math.sqrt(magnitude1);
     magnitude2 = Math.sqrt(magnitude2);
-    if (magnitude1 === 0 || magnitude2 === 0) return 0;
+
+    if (magnitude1 === 0 || magnitude2 === 0) {
+      return 0;
+    }
+
     return dotProduct / (magnitude1 * magnitude2);
   }
 

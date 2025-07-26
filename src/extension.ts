@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 
 import WebviewProvider from "./provider/WebviewProvider";
 import OllamaCompletionProvider from "./provider/OllamaCompletionProvider";
+import OllamaService from "./service/OllamaService";
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand("pilot.helloWorld", () => {

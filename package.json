@@ -41,7 +41,7 @@
         "pilot.model": {
           "type": "string",
           "default": "",
-          "description": "AI model name (llama2:latest)"
+          "description": "AI model name (codellama:instruct)"
         },
         "pilot.embeddingModel": {
           "type": "string",
@@ -50,9 +50,7 @@
         },
         "pilot.systemMessage": {
           "type": "string",
-          "default": {
-            "message": ""
-          },
+          "default": "You are a strict code completion assistant used in a code editor.\n\n<BEHAVIOR>\n- You must return only the continuation of the code.\n- NEVER repeat or rewrite code that is already present.\n- Your output will be inserted directly at the current cursor.\n- If a function is partially written, continue it without repeating the header or prior lines.\n</BEHAVIOR>\n\n<FORMATTING>\n- Do not wrap your response in markdown.\n- Output only valid code — no comments, explanations, or repeated lines.\n</FORMATTING>",
           "editPresentation": "multilineText",
           "markdownDescription": "Defines the system prompt that guides the AI's behavior. This message is prepended to every conversation and should be written carefully to shape the assistant's tone, role, or limitations."
         }

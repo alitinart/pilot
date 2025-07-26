@@ -8,7 +8,7 @@ const MAX_RESULTS = 5000;
 
 export default async function indexWorkspace(AIService: AIService) {
   StatusBarProvider.show(`$(sync~spin) Indexing Workspace...`);
-  vscode.window.showInformationMessage("Indexing workspace with Ollama...");
+  vscode.window.showInformationMessage("Indexing workspace...");
 
   const includePattern =
     "**/*.{ts,js,jsx,tsx,py,cs,java,cpp,h,json,md,txt,vue,svelte,html,css,scss,less,go,rs,rb,php,kt,swift}";
@@ -49,13 +49,13 @@ export default async function indexWorkspace(AIService: AIService) {
       processedFiles++;
     } catch (error) {
       console.error(`Error processing file ${file.fsPath}:`, error);
+      vscode.window.showErrorMessage(
+        `Error while processing file ${file.fsPath}`
+      );
     }
   }
   console.log(
     `Indexed ${codeChunks.length} chunks from ${processedFiles} files.`
-  );
-  vscode.window.showInformationMessage(
-    `Workspace indexing complete! Indexed ${codeChunks.length} chunks.`
   );
 
   AIService.setCodeChunks(codeChunks);

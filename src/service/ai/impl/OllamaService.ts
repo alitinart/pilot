@@ -3,6 +3,8 @@ import axios, { AxiosError } from "axios";
 import { CodeChunk } from "../../../types/CodeChunk";
 import getSetting from "../../../conf/getSetting";
 import { AIService } from "../AIService";
+import { Message } from "../../../types/Message";
+import StatusBarProvider from "../../../provider/StatusBarProvider";
 
 export default class OllamaService implements AIService {
   private static instance: OllamaService;
@@ -22,6 +24,34 @@ export default class OllamaService implements AIService {
   }
 
   private codeChunks: CodeChunk[] = [];
+  private chatMessages: Message[] = [
+    {
+      role: "system",
+      content: `You are Pilot, a self-hosted AI assistant embedded in a code editor.
+
+<BEHAVIOR>
+- Always assist with software development, coding, debugging, or tool configuration.
+- Respond concisely and accurately using real information only. If unsure, say you don't know.
+- Respect user privacy — never collect or reference user data outside of what is provided in context.
+- Avoid speculation, opinions, or unnecessary commentary.
+- Never include personal anecdotes, jokes, or filler.
+- If code is needed, provide complete and valid snippets tailored to the language or framework in use.
+</BEHAVIOR>
+
+<FORMATTING>
+- Use markdown for formatting (code blocks, headers, lists).
+- When showing code, use the correct language identifier (e.g., \`\`\`ts, \`\`\`py).
+- Avoid markdown when the user is copying/pasting directly into code unless requested.
+</FORMATTING>
+
+<ROLE>
+- You are a developer assistant, not a general-purpose chatbot.
+- Focus on solving the user's problem with clarity and efficiency.
+- You are always direct, professional, and technical in tone.
+</ROLE>
+`,
+    },
+  ];
 
   public getCodeChunks() {
     return this.codeChunks;
@@ -65,6 +95,45 @@ export default class OllamaService implements AIService {
     }
   }
 
+  public async chat(prompt: string) {
+    let projectContext = await this.retriever(prompt);
+
+    let currentMessages = this.chatMessages;
+    const context = {
+      role: "system",
+      content: `<code_from_other_files>
+      ${projectContext}
+      </code_from_other_files>`,
+    };
+    const message = { role: "user", content: prompt };
+    currentMessages.push(context);
+    currentMessages.push(message);
+
+    const body = {
+      model: this.model,
+      messages: currentMessages,
+      stream: false,
+    };
+
+    try {
+      StatusBarProvider.show("$(spin~spin) Pilot Thinking...");
+      const res = await axios.post(`${this.serverUrl}/api/chat`, body);
+      if (res.status !== 200) {
+        throw new Error(`Ollama API error: ${res.statusText}`);
+      }
+
+      const aiResponse = res.data.message;
+      this.chatMessages.push(aiResponse);
+      return aiResponse;
+    } catch (err: any) {
+      console.error("Error while generating response: ", err);
+      vscode.window.showErrorMessage(`Failed to generate response from model`);
+      throw err;
+    } finally {
+      StatusBarProvider.hide();
+    }
+  }
+
   public async completion(prompt: string, token?: vscode.CancellationToken) {
     const body = {
       model: this.model,
@@ -101,6 +170,18 @@ export default class OllamaService implements AIService {
     }
   }
 
+  public async retriever(text: string) {
+    let context = "";
+    if (this.getCodeChunks().length > 0) {
+      const queryTextForRetrieval = text;
+      if (queryTextForRetrieval.trim().length > 0) {
+        context = await this._retriever(queryTextForRetrieval);
+      }
+    }
+
+    return context;
+  }
+
   public async getEmbeddings(text: string) {
     const body = {
       model: this.embeddingModel,
@@ -122,7 +203,7 @@ export default class OllamaService implements AIService {
     }
   }
 
-  public async retriever(text: string) {
+  private async _retriever(text: string) {
     try {
       const queryEmbedding = await this.getEmbeddings(text);
       const relevantChunks = this.retrieveRelevantChunks(queryEmbedding);

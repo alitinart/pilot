@@ -4,23 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pilot - Panel</title>
-    <link rel="stylesheet" href="styles.css" />
 
     <!-- MUST HAVE -->
     <link rel="stylesheet" href="%GLOBAL_STYLES%" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="center-wrapper">
-      <div class="hero">
-        <img class="logo" src="icon.svg" alt="" />
-
-        <h1>Pilot</h1>
+      <div class="branding">
+        <h1><img class="logo" src="icon.svg" alt="" /> Pilot</h1>
         <p>Create your own AI Assistant</p>
 
-        <button type="button" id="open-vscode-settings">
-          Open in VS Code Settings
-        </button>
+        <button type="button" id="open-vscode-settings">Settings</button>
       </div>
+      <div id="loading-bar" class="hidden"></div>
       <div id="chat-container">
         <div id="messages"></div>
         <div class="chat-input-area">
@@ -34,6 +37,7 @@
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="main.js"></script>
   </body>

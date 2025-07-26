@@ -10,10 +10,10 @@ const ollamaService = OllamaService.getInstance();
 const model = getSetting<string>("model");
 
 export async function activate(context: vscode.ExtensionContext) {
-  // if (model) {
-  //   await ollamaService.loadModel(model);
-  // }
-  // await indexWorkspace(ollamaService);
+  if (model) {
+    await ollamaService.loadModel(model);
+  }
+  await indexWorkspace(ollamaService);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
@@ -26,13 +26,13 @@ export async function activate(context: vscode.ExtensionContext) {
     )
   );
 
-  // vscode.languages.registerInlineCompletionItemProvider(
-  //   { scheme: "file" },
-  //   new OllamaCompletionProvider()
-  // );
-  // vscode.commands.registerCommand("pilot.triggerInlineCompletion", async () => {
-  //   await vscode.commands.executeCommand("editor.action.inlineSuggest.trigger");
-  // });
+  vscode.languages.registerInlineCompletionItemProvider(
+    { scheme: "file" },
+    new OllamaCompletionProvider()
+  );
+  vscode.commands.registerCommand("pilot.triggerInlineCompletion", async () => {
+    await vscode.commands.executeCommand("editor.action.inlineSuggest.trigger");
+  });
 
   vscode.window.showInformationMessage("Pilot Ready 🚀");
 }

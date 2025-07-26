@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { CodeChunk } from "../../types/CodeChunk";
+import { Message } from "../../types/Message";
 
 /**
  * Interface for the AI Service, defining its public API.
@@ -44,6 +45,14 @@ export interface AIService {
    * @returns A promise that resolves with the completion string.
    */
   completion(prompt: string, token?: vscode.CancellationToken): Promise<string>;
+
+  /**
+   * Generates a response for the user, based on the prompt and prior messages
+   * @param prompt The prompt string to send to the model
+   * @param messages A list of prior messages
+   * @returns A promise that resolves with a Message object
+   */
+  chat(prompt: string): Promise<Message>;
 
   /**
    * Generates embeddings for a given text using the configured embedding model.

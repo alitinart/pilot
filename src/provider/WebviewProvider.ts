@@ -1,9 +1,12 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
+import OllamaService from "../service/ai/impl/OllamaService";
+import { Message } from "../types/Message";
 
 export default class WebviewProvider implements vscode.WebviewViewProvider {
   htmlPath: string = "";
   assets: string[] = [];
+  ollamaService: OllamaService;
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
@@ -12,6 +15,7 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
   ) {
     this.htmlPath = htmlPath;
     this.assets = assets;
+    this.ollamaService = OllamaService.getInstance();
   }
 
   public resolveWebviewView(
@@ -62,7 +66,7 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
         .toString()
     );
 
-    webview.onDidReceiveMessage((message) => {
+    webview.onDidReceiveMessage(async (message) => {
       switch (message.command) {
         case "openSettings":
           vscode.commands.executeCommand(
@@ -71,7 +75,13 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
           );
           break;
         case "sendMessage":
-          vscode.window.showInformationMessage(message.text);
+          const { content } = message;
+          try {
+            const aiResponse: Message = await this.ollamaService.chat(content);
+            webview.postMessage({ command: "addMessage", ...aiResponse });
+          } catch {
+            webview.postMessage({ command: "error" });
+          }
           break;
         default:
           vscode.window.showErrorMessage(

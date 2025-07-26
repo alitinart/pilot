@@ -64,16 +64,7 @@ export default class OllamaCompletionProvider
       )
     );
 
-    let projectContext = "";
-    if (this.ollamaService.getCodeChunks().length > 0) {
-      const queryTextForRetrieval = currentContext;
-      if (queryTextForRetrieval.trim().length > 0) {
-        projectContext = await this.ollamaService.retriever(
-          queryTextForRetrieval
-        );
-      }
-    }
-
+    let projectContext = await this.ollamaService.retriever(currentContext);
     const prompt = `
 <system>
 ${this.systemMessage}

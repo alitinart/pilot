@@ -1,21 +1,29 @@
 (function () {
   const vscode = acquireVsCodeApi();
 
-  document
-    .getElementById("open-vscode-settings")
-    .addEventListener("click", () => {
-      vscode.postMessage({ command: "openSettings" });
-    });
-
+  const loadingBar = document.getElementById("loading-bar");
   const messagesDiv = document.getElementById("messages");
   const chatInput = document.getElementById("chat-input");
   const sendButton = document.getElementById("send-button");
 
-  function addMessage(sender, text) {
+  marked.setOptions({
+    highlight: function (code, lang) {
+      if (hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      }
+      return hljs.highlightAuto(code).value;
+    },
+  });
+
+  function addMessage(role, content) {
     const messageElement = document.createElement("div");
-    messageElement.classList.add("message", sender);
-    messageElement.textContent = text;
+    messageElement.classList.add("message", role);
+
+    const markdownHTML = marked.parse(content);
+    messageElement.innerHTML = markdownHTML;
+
     messagesDiv.appendChild(messageElement);
+    hljs.highlightAll();
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
@@ -25,15 +33,32 @@
     }
   }
 
+  function addLoadingMessage() {
+    const loadingElement = document.createElement("div");
+    loadingElement.classList.add("message", "assistant", "loading");
+    loadingElement.innerHTML = `<div class="loader"></div>`;
+    loadingElement.id = "loading-message";
+    messagesDiv.appendChild(loadingElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function removeLoadingMessage() {
+    const loading = document.getElementById("loading-message");
+    if (loading) {
+      loading.remove();
+    }
+  }
+
   sendButton.addEventListener("click", () => {
-    const text = chatInput.value.trim();
-    if (text) {
+    const content = chatInput.value.trim();
+    if (content) {
       vscode.postMessage({
         command: "sendMessage",
-        text: text,
+        content,
       });
       chatInput.value = "";
-      addMessage("user", text);
+      addMessage("user", content);
+      addLoadingMessage();
     }
   });
 
@@ -44,15 +69,26 @@
     }
   });
 
-  window.addEventListener("message", (event) => {
-    const message = event.data;
+  window.addEventListener("message", (e) => {
+    const message = e.data;
     switch (message.command) {
       case "addMessage":
-        addMessage(message.sender, message.text);
+        addMessage(message.role, message.content);
+        removeLoadingMessage();
         break;
       case "removeLastMessage":
         removeLastMessage();
         break;
     }
   });
+
+  window.addEventListener("error", (e) => {
+    removeLoadingMessage();
+  });
+
+  document
+    .getElementById("open-vscode-settings")
+    .addEventListener("click", () => {
+      vscode.postMessage({ command: "openSettings" });
+    });
 })();

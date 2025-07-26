@@ -17,6 +17,17 @@
       {
         "command": "pilot.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "pilot.triggerInlineCompletion",
+        "title": "Pilot: Rerun Inline Completion"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "pilot.triggerInlineCompletion",
+        "key": "ctrl+shift+space",
+        "when": "editorTextFocus"
       }
     ],
     "configuration": {

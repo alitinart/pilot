@@ -58,19 +58,23 @@ export default class OllamaCompletionProvider
 
     const currentContext = document.getText(
       new vscode.Range(
-        new vscode.Position(Math.max(0, position.line - 20), 0),
+        new vscode.Position(Math.max(0, position.line - 10), 0),
         position
       )
     );
 
     const prompt = `
-<<SYS>>
+<system>
 ${this.systemMessage}
-The code is written in this file ${document.fileName}
-<</SYS>>
+</system>
 
-Complete the following code based on the context:
+<code_before_cursor>
 ${currentContext}
+</code_before_cursor>
+
+<task>
+Continue this code without repeating anything above. Your output will be inserted directly where the cursor is.
+</task>
 `;
 
     try {
@@ -79,13 +83,18 @@ ${currentContext}
         linkedToken
       );
 
+      const postProcessedCompletion = this.removePrefixOverlap(
+        currentContext,
+        this.cleanResponse(completion)
+      );
+
       if (linkedToken.isCancellationRequested || !completion) {
         return undefined;
       }
 
       return [
         new vscode.InlineCompletionItem(
-          completion,
+          postProcessedCompletion,
           new vscode.Range(position, position)
         ),
       ];
@@ -106,5 +115,25 @@ ${currentContext}
     token1.onCancellationRequested(() => source.cancel());
     token2.onCancellationRequested(() => source.cancel());
     return source.token;
+  }
+
+  private cleanResponse(response: string): string {
+    const match = response.match(/```(?:[a-z]*)?\s*([\s\S]*?)\s*```/);
+    return match ? match[1].trim() : response.trim();
+  }
+
+  private removePrefixOverlap(
+    typedText: string,
+    completionText: string
+  ): string {
+    let i = 0;
+    while (
+      i < typedText.length &&
+      i < completionText.length &&
+      typedText[i] === completionText[i]
+    ) {
+      i++;
+    }
+    return completionText.slice(i);
   }
 }

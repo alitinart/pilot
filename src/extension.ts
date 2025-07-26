@@ -23,6 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
     { scheme: "file" },
     new OllamaCompletionProvider()
   );
+  vscode.commands.registerCommand("pilot.triggerInlineCompletion", async () => {
+    await vscode.commands.executeCommand("editor.action.inlineSuggest.trigger");
+  });
 
   context.subscriptions.push(disposable);
 }

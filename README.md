@@ -64,9 +64,7 @@ You can modify these in your VS Code settings panel (Cmd/Ctrl + , → Search "Pi
 
 ## Known Issues
 
-- 🐞 Indexing extremely large workspaces may affect performance.
-
-- 🔁 The assistant currently does not persist chat history across reloads.
+- 🚫 NONE
 
 ---
 

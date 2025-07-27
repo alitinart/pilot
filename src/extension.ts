@@ -4,7 +4,11 @@ import WebviewProvider from "./provider/WebviewProvider";
 import OllamaCompletionProvider from "./provider/ai/OllamaCompletionProvider";
 import OllamaService from "./service/ai/impl/OllamaService";
 import getSetting from "./conf/getSetting";
-import indexWorkspace from "./conf/indexWorkspace";
+import indexWorkspace, {
+  loadCodeChunks,
+  saveCodeChunks,
+} from "./conf/indexWorkspace";
+import { debounceAsync } from "./conf/debounce";
 
 const ollamaService = OllamaService.getInstance();
 const model = getSetting<string>("model");
@@ -33,6 +37,16 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand("pilot.triggerInlineCompletion", async () => {
     await vscode.commands.executeCommand("editor.action.inlineSuggest.trigger");
   });
+
+  const debouncedIndex = debounceAsync(indexWorkspace, 1000);
+
+  vscode.workspace.onDidSaveTextDocument(async (document) => {
+    await debouncedIndex(context, ollamaService, document.uri);
+  });
+
+  vscode.workspace.onDidDeleteFiles(
+    async () => await indexWorkspace(context, ollamaService)
+  );
 
   vscode.window.showInformationMessage("Pilot Ready 🚀");
 }

@@ -8,7 +8,7 @@ const MAX_RESULTS = 5000;
 
 const codeChunksFile = "code_chunks.json";
 
-async function saveCodeChunks(
+export async function saveCodeChunks(
   context: vscode.ExtensionContext,
   codeChunks: CodeChunk[]
 ) {
@@ -26,7 +26,26 @@ async function saveCodeChunks(
   }
 }
 
-async function loadCodeChunks(
+async function pruneDeletedFiles(
+  context: vscode.ExtensionContext
+): Promise<CodeChunk[]> {
+  const existingChunks = await loadCodeChunks(context);
+
+  const validChunks: CodeChunk[] = [];
+  for (const chunk of existingChunks) {
+    try {
+      await vscode.workspace.fs.stat(vscode.Uri.file(chunk.filePath));
+      validChunks.push(chunk);
+    } catch {
+      // file no longer exists, skip
+    }
+  }
+
+  await saveCodeChunks(context, validChunks);
+  return validChunks;
+}
+
+export async function loadCodeChunks(
   context: vscode.ExtensionContext
 ): Promise<CodeChunk[]> {
   const filePath = vscode.Uri.joinPath(context.storageUri!, codeChunksFile);
@@ -41,8 +60,10 @@ async function loadCodeChunks(
 
 export default async function indexWorkspace(
   context: vscode.ExtensionContext,
-  AIService: AIService
+  AIService: AIService,
+  specificFileUri?: vscode.Uri
 ) {
+  await pruneDeletedFiles(context);
   if (!context.storageUri) {
     return;
   }
@@ -62,11 +83,13 @@ export default async function indexWorkspace(
   const excludePattern =
     "{**/node_modules/**,**/.git/**,**/dist/**,**/build/**,**/out/**,**/__pycache__/**,**/*.min.js,**/*.map,**/.vscode/**,**/.idea/**,**/coverage/**,**/test/**,**/tests/**,**/tmp/**,**/temp/**,**/vendor/**,**/*.log,**/*.lock,**/*.bak,**/*.tmp,**/*.DS_Store}";
 
-  const files = await vscode.workspace.findFiles(
-    includePattern,
-    excludePattern,
-    MAX_RESULTS
-  );
+  const files = specificFileUri
+    ? [specificFileUri]
+    : await vscode.workspace.findFiles(
+        includePattern,
+        excludePattern,
+        MAX_RESULTS
+      );
 
   let processedFiles = 0;
 

@@ -48,6 +48,19 @@ export async function activate(context: vscode.ExtensionContext) {
     async () => await indexWorkspace(context, ollamaService)
   );
 
+  context.subscriptions.push(
+    vscode.commands.registerCommand("pilot.openWebview", () => {
+      vscode.commands.executeCommand("workbench.view.extension.chat");
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("pilot.indexWorkspace", async () => {
+      await indexWorkspace(context, ollamaService);
+      vscode.window.showInformationMessage("Workspace re-indexed ✅");
+    })
+  );
+
   vscode.window.showInformationMessage("Pilot Ready 🚀");
 }
 

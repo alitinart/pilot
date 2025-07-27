@@ -19,13 +19,32 @@
       {
         "command": "pilot.triggerInlineCompletion",
         "title": "Pilot: Rerun Inline Completion"
+      },
+      {
+        "command": "pilot.openWebview",
+        "title": "Pilot: Open Webview"
+      },
+      {
+        "command": "pilot.indexWorkspace",
+        "title": "Pilot: Index Workspace"
       }
     ],
     "keybindings": [
       {
         "command": "pilot.triggerInlineCompletion",
         "key": "ctrl+shift+space",
+        "mac": "cmd+shift+space",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "pilot.openWebview",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p"
+      },
+      {
+        "command": "pilot.indexWorkspace",
+        "key": "ctrl+alt+i",
+        "mac": "cmd+alt+i"
       }
     ],
     "configuration": {

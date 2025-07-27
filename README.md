@@ -16,7 +16,7 @@
 - 🧠 Customizable System Prompts
   Fine-tune how Pilot behaves in both inline and chat interactions.
 
-- ⌨️ Keyboard Shortcuts
+- ⌨️ **Keyboard Shortcuts**
 
   - Ctrl+Shift+Space / Cmd+Shift+Space: Rerun inline completion
 
@@ -37,7 +37,7 @@ nomic-embed-text:latest (for embedding workspace context)
 Install Ollama and start your model with:
 
 ```bash
-ollama run codellama:instruct
+ollama pull codellama:instruct
 ```
 
 You can configure the server address and model names in your VS Code settings.

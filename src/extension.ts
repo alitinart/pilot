@@ -13,7 +13,7 @@ export async function activate(context: vscode.ExtensionContext) {
   if (model) {
     await ollamaService.loadModel(model);
   }
-  await indexWorkspace(ollamaService);
+  await indexWorkspace(context, ollamaService);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(

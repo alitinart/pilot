@@ -34,15 +34,13 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
   private _getHtmlForWebview(webview: vscode.Webview) {
     const htmlPath = vscode.Uri.joinPath(
       this._extensionUri,
-      "src",
-      "views",
+      "media",
       this.htmlPath,
       "index.html"
     );
     const assetsFolder = vscode.Uri.joinPath(
       this._extensionUri,
-      "src",
-      "views",
+      "media",
       this.htmlPath,
       "assets"
     );
@@ -61,7 +59,7 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
       "%GLOBAL_STYLES%",
       webview
         .asWebviewUri(
-          vscode.Uri.joinPath(this._extensionUri, "src", "views", "global.css")
+          vscode.Uri.joinPath(this._extensionUri, "media", "global.css")
         )
         .toString()
     );

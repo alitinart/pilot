@@ -4,6 +4,10 @@
   "publisher": "nartaliti",
   "description": "Host your own coding assistant instantly",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alitinart/pilot"
+  },
   "engines": {
     "vscode": "^1.102.0"
   },

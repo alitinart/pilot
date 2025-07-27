@@ -16,6 +16,13 @@ export default class OllamaService implements AIService {
     "autoCompleteSystemMessage"
   );
   private chatSystemMessage = getSetting<string>("chatSystemMessage");
+  private codeChunks: CodeChunk[] = [];
+  private chatMessages: Message[] = [
+    {
+      role: "system",
+      content: this.chatSystemMessage!,
+    },
+  ];
 
   private constructor() {}
 
@@ -26,13 +33,13 @@ export default class OllamaService implements AIService {
     return OllamaService.instance;
   }
 
-  private codeChunks: CodeChunk[] = [];
-  private chatMessages: Message[] = [
-    {
-      role: "system",
-      content: this.chatSystemMessage!,
-    },
-  ];
+  public getChatMessages(): Message[] {
+    return this.chatMessages.filter((msg) => msg.role !== "system");
+  }
+
+  public addMessage(message: Message) {
+    return this.chatMessages.push(message);
+  }
 
   public getCodeChunks() {
     return this.codeChunks;
@@ -104,7 +111,7 @@ export default class OllamaService implements AIService {
       }
 
       const aiResponse = res.data.message;
-      this.chatMessages.push(aiResponse);
+      this.addMessage(aiResponse);
       return aiResponse;
     } catch (err: any) {
       console.error("Error while generating response: ", err);

@@ -1,5 +1,8 @@
 (function () {
   const vscode = acquireVsCodeApi();
+  vscode.postMessage({
+    command: "requestMessages",
+  });
 
   const messagesDiv = document.getElementById("messages");
   const chatInput = document.getElementById("chat-input");
@@ -79,6 +82,11 @@
         break;
       case "removeLastMessage":
         removeLastMessage();
+        break;
+      case "previousMessages":
+        message.messages.forEach((msg) => {
+          addMessage(msg.role, msg.content);
+        });
         break;
     }
   });

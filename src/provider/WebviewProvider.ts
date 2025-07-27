@@ -1,3 +1,4 @@
+import { AIService } from "./../service/ai/AIService";
 import * as vscode from "vscode";
 import * as fs from "fs";
 import OllamaService from "../service/ai/impl/OllamaService";
@@ -6,16 +7,17 @@ import { Message } from "../types/Message";
 export default class WebviewProvider implements vscode.WebviewViewProvider {
   htmlPath: string = "";
   assets: string[] = [];
-  ollamaService: OllamaService;
+  AIService: AIService;
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
+    AIService: AIService,
     htmlPath: string,
     assets: string[]
   ) {
     this.htmlPath = htmlPath;
     this.assets = assets;
-    this.ollamaService = OllamaService.getInstance();
+    this.AIService = AIService;
   }
 
   public resolveWebviewView(
@@ -75,11 +77,18 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
         case "sendMessage":
           const { content } = message;
           try {
-            const aiResponse: Message = await this.ollamaService.chat(content);
+            const aiResponse: Message = await this.AIService.chat(content);
             webview.postMessage({ command: "addMessage", ...aiResponse });
           } catch {
             webview.postMessage({ command: "error" });
           }
+          break;
+        case "requestMessages":
+          const previousMessages = this.AIService.getChatMessages();
+          webview.postMessage({
+            command: "previousMessages",
+            messages: previousMessages,
+          });
           break;
         default:
           vscode.window.showErrorMessage(

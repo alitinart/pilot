@@ -88,7 +88,7 @@ You can modify these in your VS Code settings panel (Cmd/Ctrl + , → Search "Pi
 
 ## Contributing
 
-Welcome contributors! Feel free to fork and create pull requests for issues that you have a fix.
+Welcome contributors! Contributing guidelines are still a work in progress, until then feel free to use the extension and report issues.
 
 ---
 

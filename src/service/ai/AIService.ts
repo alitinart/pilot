@@ -7,6 +7,16 @@ import { Message } from "../../types/Message";
  */
 export interface AIService {
   /**
+   * Gets all chats saved in session
+   */
+  getChatMessages(): Message[];
+
+  /**
+   * Pushes a new message to chat array
+   */
+  addMessage(message: Message): number;
+
+  /**
    * Gets the currently loaded code chunks.
    */
   getCodeChunks(): CodeChunk[];

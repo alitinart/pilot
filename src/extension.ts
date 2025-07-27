@@ -22,7 +22,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       "chat",
-      new WebviewProvider(context.extensionUri, "chat", [
+      new WebviewProvider(context.extensionUri, ollamaService, "chat", [
         "main.js",
         "styles.css",
         "icon.svg",

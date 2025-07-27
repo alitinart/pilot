@@ -21,8 +21,8 @@
         "title": "Pilot: Rerun Inline Completion"
       },
       {
-        "command": "pilot.openWebview",
-        "title": "Pilot: Open Webview"
+        "command": "pilot.openChat",
+        "title": "Pilot: Open Chat"
       },
       {
         "command": "pilot.indexWorkspace",
@@ -37,7 +37,7 @@
         "when": "editorTextFocus"
       },
       {
-        "command": "pilot.openWebview",
+        "command": "pilot.openChat",
         "key": "ctrl+alt+p",
         "mac": "cmd+alt+p"
       },

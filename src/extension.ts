@@ -49,7 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("pilot.openWebview", () => {
+    vscode.commands.registerCommand("pilot.openChat", () => {
       vscode.commands.executeCommand("workbench.view.extension.chat");
     })
   );

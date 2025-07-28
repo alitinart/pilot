@@ -60,7 +60,7 @@ export default class OllamaService implements AIService {
     } catch (err: any) {
       console.error("Error loading model:", err);
       vscode.window.showErrorMessage(
-        `Failed to load model "${name}": ${err.message || err.toString()}`
+        `❌ Failed to load model "${name}". Make sure your local LLM is running !`
       );
       throw err;
     }

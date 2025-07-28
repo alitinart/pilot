@@ -12,22 +12,35 @@ import { debounceAsync } from "./conf/debounce";
 
 const ollamaService = OllamaService.getInstance();
 const model = getSetting<string>("model");
+const embeddingModel = getSetting<string>("embeddingModel");
 
 export async function activate(context: vscode.ExtensionContext) {
+  let errorMessage: string | undefined;
+
   if (model) {
-    await ollamaService.loadModel(model);
+    try {
+      await ollamaService.loadModel(model);
+    } catch (err) {
+      errorMessage =
+        "❌ Failed to load model. Make sure your local LLM is running.";
+      vscode.window.showErrorMessage(errorMessage);
+    }
   }
-  await indexWorkspace(context, ollamaService);
+
+  if (embeddingModel) {
+    await indexWorkspace(context, ollamaService);
+  }
+
+  const provider = new WebviewProvider(
+    context.extensionUri,
+    ollamaService,
+    "chat",
+    ["main.js", "styles.css", "icon.svg"],
+    errorMessage
+  );
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(
-      "chat",
-      new WebviewProvider(context.extensionUri, ollamaService, "chat", [
-        "main.js",
-        "styles.css",
-        "icon.svg",
-      ])
-    )
+    vscode.window.registerWebviewViewProvider("chat", provider)
   );
 
   vscode.languages.registerInlineCompletionItemProvider(

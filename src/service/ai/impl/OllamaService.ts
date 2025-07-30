@@ -60,7 +60,7 @@ export default class OllamaService implements AIService {
     } catch (err: any) {
       console.error("Error loading model:", err);
       vscode.window.showErrorMessage(
-        `❌ Failed to load model "${name}". Make sure your local LLM is running !`
+        `❌ Failed to load model "${name}". Make sure your local LLM is running - Pilot`
       );
       throw err;
     }
@@ -184,10 +184,7 @@ export default class OllamaService implements AIService {
       return res.data.embedding;
     } catch (err: any) {
       console.error("Error generating embedding:", err);
-      vscode.window.showErrorMessage(
-        `Failed to generate embeddings: ${err.message || err.toString()}`
-      );
-      return [];
+      throw err;
     }
   }
 

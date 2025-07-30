@@ -22,13 +22,18 @@ export async function activate(context: vscode.ExtensionContext) {
       await ollamaService.loadModel(model);
     } catch (err) {
       errorMessage =
-        "❌ Failed to load model. Make sure your local LLM is running.";
-      vscode.window.showErrorMessage(errorMessage);
+        "❌ Failed to load model. Make sure your local LLM is running or that your model exists.";
     }
+  } else {
+    errorMessage = "❌ Please choose a model to use in settings";
   }
 
   if (embeddingModel) {
     await indexWorkspace(context, ollamaService);
+  } else {
+    vscode.window.showInformationMessage(
+      "Couldn't index workspace. No embedding model chosen - Pilot"
+    );
   }
 
   const provider = new WebviewProvider(

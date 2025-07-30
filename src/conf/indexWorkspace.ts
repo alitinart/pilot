@@ -64,6 +64,7 @@ export default async function indexWorkspace(
   specificFileUri?: vscode.Uri
 ) {
   await pruneDeletedFiles(context);
+
   if (!context.storageUri) {
     return;
   }
@@ -122,10 +123,12 @@ export default async function indexWorkspace(
         }
       }
       processedFiles++;
-    } catch (error) {
-      console.error(`Error processing file ${file.fsPath}:`, error);
+    } catch (err: any) {
+      console.error(`Error processing file ${file.fsPath}:`, err);
       vscode.window.showErrorMessage(
-        `Error while processing file ${file.fsPath}`
+        `Error while processing file ${file.fsPath} | ${
+          err.message || err.toString()
+        }`
       );
     }
   }

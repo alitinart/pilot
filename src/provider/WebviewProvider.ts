@@ -99,6 +99,8 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
               margin-top: 1rem;
               cursor: pointer;
               border-radius: 4px;
+              width: 50vmin;
+              text-align: center;
             }
           </style>
         </head>
@@ -106,10 +108,14 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
           <h2>🚨 Extension Error</h2>
           <p>${this.error}</p>
           <button onclick="reload()">Reload Extension</button>
+          <button onclick="openSettings()">Open Settings</button>
           <script>
             const vscode = acquireVsCodeApi();
             function reload() {
               vscode.postMessage({ command: "reload" });
+            }
+            function openSettings() {
+              vscode.postMessage({command: "openSettings"});
             }
           </script>
         </body>

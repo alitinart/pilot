@@ -2,6 +2,7 @@
   "name": "pilot",
   "displayName": "pilot",
   "publisher": "nartaliti",
+  "icon": "resources/icon.png",
   "description": "Host your own coding assistant instantly",
   "version": "1.0.0",
   "repository": {

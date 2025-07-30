@@ -1,20 +1,20 @@
 # Pilot
 
-**Pilot** is a self-hosted, privacy-first coding assistant built as a extension for Visual Studio Code. It offers inline code completions and an AI-powered chat interface, helping you write, debug, and understand code faster, all without sending your data to third parties.
+**Pilot** is your self-hosted, privacy-first coding assistant for Visual Studio Code. It brings AI-powered chat and inline code completions right into your editor—helping you code, debug, and explore your project faster. Best of all, your code stays yours—no data ever leaves your machine.
 
 # Features
 
 - ✨ Inline Code Completions
-  Real-time completions tailored to your context using your own self-hosted models.
+  Get real-time suggestions based on your code context, powered by your own models.
 
 - 💬 Chat with AI
-  A full-featured developer chat assistant inside the activity bar sidebar.
+  Ask questions, get explanations, or debug problems using a smart developer assistant.
 
 - 📁 Workspace Indexing
-  Index your project to enhance the assistant’s understanding of your codebase.
+  Boost accuracy by indexing your project so the assistant understands your codebase better.
 
 - 🧠 Customizable System Prompts
-  Fine-tune how Pilot behaves in both inline and chat interactions.
+  Tune how Pilot behaves, both in completions and chat.
 
 - ⌨️ **Keyboard Shortcuts**
 
@@ -28,37 +28,42 @@
 
 ## Requirements
 
-To use Pilot, you need to run a self-hosted Ollama server with models like:
+To use Pilot, you must run a local or remote Ollama server with 2 types of models, a normal LLM for coding and an Embedding LLM for indexing.
 
-codellama:instruct (for inline completion and chatting)
+The ones I recommend are:
 
-nomic-embed-text:latest (for embedding workspace context)
+- **codellama:instruct (for inline completion and chatting)**
 
-Install Ollama and start your model with:
+- **nomic-embed-text:latest (for embedding workspace context)**
+
+You can also use other models.
+
+Install them with:
 
 ```bash
 ollama pull codellama:instruct
+ollama pull nomic-embed-text:instruct
 ```
 
-You can configure the server address and model names in your VS Code settings.
+Then, set the server URL and model names in your VS Code settings.
+
+**⚠️ Heads up**: If your machine isn’t powerful enough to run these models smoothly, you may notice delays during chat, completion, or indexing
 
 ---
 
 ## Extension Settings
 
-This extension contributes the following settings:
+You can configure Pilot through your VS Code settings (Cmd/Ctrl + ,, then search for "Pilot"):
 
-- pilot.serverUrl: Sets the local or remote Ollama server URL.
+- pilot.serverUrl: URL of your local/remote Ollama server
 
-- pilot.model: The model used for inline code completions.
+- pilot.model: Model used for inline code suggestions
 
-- pilot.embeddingModel: The model used for embedding your workspace context.
+- pilot.embeddingModel: Model used to understand your project context
 
-- pilot.autoCompleteSystemMessage: Customize the behavior of the inline assistant (default: strict code-only completions).
+- pilot.autoCompleteSystemMessage: Customize how inline completions behave
 
-- pilot.chatSystemMessage: Define how Pilot behaves in chat (default: focused, technical assistant).
-
-You can modify these in your VS Code settings panel (Cmd/Ctrl + , → Search "Pilot").
+- pilot.chatSystemMessage: Adjust the tone/personality of the chat assistant
 
 ---
 
@@ -76,7 +81,7 @@ You can modify these in your VS Code settings panel (Cmd/Ctrl + , → Search "Pi
 
 - Inline code completions
 
-- AI-powered chat
+- AI powered chat
 
 - Workspace indexing
 
@@ -86,7 +91,7 @@ You can modify these in your VS Code settings panel (Cmd/Ctrl + , → Search "Pi
 
 ## Contributing
 
-Welcome contributors! Contributing guidelines are still a work in progress, until then feel free to use the extension and report issues.
+Excited to have contributors on board! While contribution guidelines are still in progress, feel free to try out the extension and [report any issues](https://github.com/alitinart/pilot/issues).
 
 ---
 
@@ -94,4 +99,4 @@ Welcome contributors! Contributing guidelines are still a work in progress, unti
 
 MIT © [Nart Aliti](https://github.com/alitinart)
 
-Enjoy using Pilot and take full control of your coding assistant! 🚀
+Pilot is all about giving you control over your AI assistant—right inside your favorite editor. Happy coding! 🧑‍💻

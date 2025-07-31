@@ -95,4 +95,7 @@ export async function deactivate() {
   if (model) {
     await ollamaService.unloadModel(model);
   }
+  if (embeddingModel) {
+    await ollamaService.unloadModel(embeddingModel);
+  }
 }

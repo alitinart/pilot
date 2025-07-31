@@ -126,10 +126,12 @@ export default async function indexWorkspace(
     } catch (err: any) {
       console.error(`Error processing file ${file.fsPath}:`, err);
       vscode.window.showErrorMessage(
-        `Error while processing file ${file.fsPath} | ${
+        `Stopped Indexing. Error while processing file ${file.fsPath} | ${
           err.message || err.toString()
         }`
       );
+
+      return;
     }
   }
 

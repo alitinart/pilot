@@ -4,10 +4,7 @@ import WebviewProvider from "./provider/WebviewProvider";
 import OllamaCompletionProvider from "./provider/ai/OllamaCompletionProvider";
 import OllamaService from "./service/ai/impl/OllamaService";
 import getSetting from "./conf/getSetting";
-import indexWorkspace, {
-  loadCodeChunks,
-  saveCodeChunks,
-} from "./conf/indexWorkspace";
+import indexWorkspace from "./conf/indexWorkspace";
 import { debounceAsync } from "./conf/debounce";
 
 const ollamaService = OllamaService.getInstance();
@@ -15,21 +12,33 @@ const model = getSetting<string>("model");
 const embeddingModel = getSetting<string>("embeddingModel");
 
 export async function activate(context: vscode.ExtensionContext) {
-  let errorMessage: string | undefined;
+  let errors = [];
 
   if (model) {
     try {
       await ollamaService.loadModel(model);
     } catch (err) {
-      errorMessage =
-        "❌ Failed to load model. Make sure your local LLM is running or that your model exists.";
+      errors.push(
+        "❌ Failed to load models. Make sure your local LLM is running or that your model exists."
+      );
     }
   } else {
-    errorMessage = "❌ Please choose a model to use in settings";
+    errors.push("❌ Please choose a model to use in settings");
   }
 
   if (embeddingModel) {
-    await indexWorkspace(context, ollamaService);
+    let ex = false;
+    try {
+      await ollamaService.loadModel(embeddingModel);
+    } catch (err) {
+      ex = true;
+      errors.push(
+        "❌ Failed to load embedding model. Make sure your local LLM is running or that your model exists."
+      );
+    }
+    if (!ex) {
+      await indexWorkspace(context, ollamaService);
+    }
   } else {
     vscode.window.showInformationMessage(
       "Couldn't index workspace. No embedding model chosen - Pilot"
@@ -41,7 +50,7 @@ export async function activate(context: vscode.ExtensionContext) {
     ollamaService,
     "chat",
     ["main.js", "styles.css", "icon.svg"],
-    errorMessage
+    errors
   );
 
   context.subscriptions.push(

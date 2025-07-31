@@ -7,19 +7,19 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
   htmlPath: string = "";
   assets: string[] = [];
   AIService: AIService;
-  error?: string;
+  errors: string[];
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
     AIService: AIService,
     htmlPath: string,
     assets: string[],
-    error?: string
+    errors: string[]
   ) {
     this.htmlPath = htmlPath;
     this.assets = assets;
     this.AIService = AIService;
-    this.error = error;
+    this.errors = errors;
   }
 
   public resolveWebviewView(
@@ -32,9 +32,10 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri],
     };
 
-    webviewView.webview.html = this.error
-      ? this._getErrorHtml(webviewView.webview)
-      : this._getHtmlForWebview(webviewView.webview);
+    webviewView.webview.html =
+      this.errors.length > 0
+        ? this._getErrorHtml(webviewView.webview)
+        : this._getHtmlForWebview(webviewView.webview);
 
     webviewView.webview.onDidReceiveMessage(async (message) => {
       switch (message.command) {
@@ -106,7 +107,9 @@ export default class WebviewProvider implements vscode.WebviewViewProvider {
         </head>
         <body>
           <h2>🚨 Extension Error</h2>
-          <p>${this.error}</p>
+          ${this.errors.map((err) => {
+            return `<p>${err}</p>`;
+          })}
           <button onclick="reload()">Reload Extension</button>
           <button onclick="openSettings()">Open Settings</button>
           <script>

@@ -1,11 +1,11 @@
 # Pilot
 
-**Pilot** is your self-hosted, privacy-first coding assistant for Visual Studio Code. It brings AI-powered chat and inline code completions right into your editor—helping you code, debug, and explore your project faster. Best of all, your code stays yours—no data ever leaves your machine.
+**Pilot** is your self hosted, privacy first coding assistant for Visual Studio Code. It brings AI powered chat and inline code completions right into your editor helping you code, debug, and explore your project faster. Best of all, your code stays yours no data ever leaves your machine.
 
 # Features
 
 - ✨ Inline Code Completions
-  Get real-time suggestions based on your code context, powered by your own models.
+  Get real time suggestions based on your code context, powered by your own models.
 
 - 💬 Chat with AI
   Ask questions, get explanations, or debug problems using a smart developer assistant.

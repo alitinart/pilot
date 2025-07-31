@@ -4,7 +4,7 @@
   "publisher": "nartaliti",
   "icon": "resources/icon.png",
   "description": "Host your own coding assistant instantly",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/alitinart/pilot"
